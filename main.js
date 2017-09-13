@@ -127,10 +127,10 @@ var brd2 = JXG.JSXGraph.initBoard('jxgbox2', {boundingbox: [-15, height2, 100, -
 
 
     CountOfMen = brd2.create('functiongraph',[function(x){
-        return depositeDaily.Y(x)/(selfD.Value()*lowedPursent(x));
+        return (depositeDaily.Y(x)/(selfD.Value()*lowedPursent(x)))*(1-reinvest);
     }]),
     totalCountOfMen = brd2.create('functiongraph',[function(x){
-        return (CountOfMen.Y(x)/conversionPursent.Value())*(1-reinvest);
+        return (CountOfMen.Y(x)/conversionPursent.Value());
     }]),
 
 
