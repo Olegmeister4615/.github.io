@@ -63,15 +63,15 @@ calculus.quantile = function (arr, k, q) {
 };
 
 
-function DiffFunc(x){
-    return (d.Value()*Math.pow((1 + c.Value()),(x-1)))-
-    (d.Value()*(1 - Math.pow((1 + c.Value()),x))/-c.Value())*u.Value()
-}
+
 function deposFunc(x){
     return (d.Value()*Math.pow((1 + c.Value()),(x-1)));
 }
 function cachFunc(x){
-    return (d.Value()*(1 - Math.pow((1 + c.Value()),x))/-c.Value())*u.Value();
+    return ((d.Value()*(1 - Math.pow((1 + c.Value()),x))/-c.Value())*u.Value())+(depositeDaily.Y(x) * refPursentOfPeople.Value() * refPursent.Value());
+}
+function DiffFunc(x){
+    return deposFunc(x) - cachFunc(x);
 }
 
 
@@ -80,13 +80,15 @@ var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, height, 100, -(hei
     c = brd.create('slider',[[1,-height*0.2],[20,-height*0.2],[0,0.0490,0.1]], {name:'c(увеличение депозита)',precision:4}),
     u = brd.create('slider',[[1,-height*0.3],[20,-height*0.3],[0,0.0495,0.15]], {name:'u(процент)',precision:4}),
 
+    refPursentOfPeople = brd.create('slider',[[55,-height*0.1],[65,-height*0.1],[0,0.45,1]], {name:'проц. людей',precision:4}),
+    refPursent = brd.create('slider',[[55,-height*0.2],[65,-height*0.2],[0,0.15,0.3]], {name:'реф. пр.',precision:4}),
     
     depositeDaily = brd.create('functiongraph',[function(x){
         return d.Value()*Math.pow((1 + c.Value()),(x-1));
     }]),
     dailyCashback = brd.create('functiongraph',[function(x){
-        var sumOfDeposites=d.Value()*(1 - Math.pow((1 + c.Value()),x))/-c.Value();
-        return sumOfDeposites*u.Value();
+        var sumOfDeposites=(d.Value()*(1 - Math.pow((1 + c.Value()),x))/-c.Value());
+        return sumOfDeposites*u.Value()+(depositeDaily.Y(x) * refPursentOfPeople.Value() * refPursent.Value());
     }],
     {strokeColor:'#00ff00'}),
 
@@ -120,7 +122,7 @@ var lowedPursent = function(x){
     return Math.pow(delta,x);
 };
 var brd2 = JXG.JSXGraph.initBoard('jxgbox2', {boundingbox: [-15, height2, 100, -(height2*0.4)], axis:true}),
-    selfD = brd2.create('slider',[[10,-height2*0.10],[30,-height2*0.10],[0,400,1000]], {name:'selfD средний вклад'}),
+    selfD = brd2.create('slider',[[10,-height2*0.10],[30,-height2*0.10],[0,400,500]], {name:'selfD средний вклад'}),
     selflowedPursent = brd2.create('slider',[[10,-height2*0.17],[30,-height2*0.17],[0,0.01,0.1]], {name:'процент понижение selfD'}),
     conversionPursent = brd2.create('slider',[[10,-height2*0.235],[30,-height2*0.235],[0,0.25,0.7]], {name:'конверсия'}),
     reinvest = brd2.create('slider',[[10,-height2*0.3],[30,-height2*0.3],[0,0.25,0.7]], {name:'реинвест'}),
@@ -180,6 +182,9 @@ var brd2 = JXG.JSXGraph.initBoard('jxgbox2', {boundingbox: [-15, height2, 100, -
     brd.on('update',()=>{
         doIt();
         brd2.update();
+    });
+    brd2.on('update',()=>{
+        doIt();
     });
 
     doIt();
